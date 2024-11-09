@@ -1,8 +1,9 @@
 pipeline {
     agent any
     environment {
-        DOCKER_HUB_CREDENTIALS = credentials('dockerhub_credentials') // Corrected credential ID
+        DOCKER_HUB_CREDENTIALS = credentials('dockerhub_credentials')
         DOCKER_IMAGE = "chandancj7/react-jenkins-docker-k8s"
+        K8S_CREDENTIALS = credentials('k8s_credentials') // Kubernetes credentials ID
     }
     stages {
         stage('Checkout') {
@@ -20,7 +21,7 @@ pipeline {
         stage('Push to Docker Hub') {
             steps {
                 script {
-                    docker.withRegistry('https://index.docker.io/v1/', 'dockerhub_credentials') { // Corrected credential ID
+                    docker.withRegistry('https://index.docker.io/v1/', 'dockerhub_credentials') {
                         docker.image(DOCKER_IMAGE).push("latest")
                     }
                 }
@@ -29,8 +30,10 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 script {
-                    sh "kubectl apply -f k8s-deployment.yaml"
-                    sh "kubectl apply -f k8s-service.yaml"
+                    withCredentials([file(credentialsId: 'k8s_credentials', variable: 'KUBECONFIG')]) {
+                        sh "kubectl apply -f k8s-deployment.yaml"
+                        sh "kubectl apply -f k8s-service.yaml"
+                    }
                 }
             }
         }
