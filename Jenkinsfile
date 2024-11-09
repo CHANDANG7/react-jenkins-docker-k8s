@@ -20,7 +20,7 @@ pipeline {
         stage('Push to Docker Hub') {
             steps {
                 script {
-                    docker.withRegistry('https://index.docker.io/v1/', 'DOCKER_HUB_CREDENTIALS') {
+                    docker.withRegistry('https://index.docker.io/v1/', 'dockerhub-credentials') {
                         docker.image(DOCKER_IMAGE).push("latest")
                     }
                 }
