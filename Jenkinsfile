@@ -3,7 +3,7 @@ pipeline {
     environment {
         DOCKER_HUB_CREDENTIALS = credentials('dockerhub_credentials')
         DOCKER_IMAGE = "chandancj7/react-jenkins-docker-k8s"
-        K8S_CREDENTIALS = credentials('k8s_credentials') // Kubernetes credentials ID
+        K8S_CREDENTIALS = credentials('k8s_jenkins_token') // Kubernetes credentials ID
     }
     stages {
         stage('Checkout') {
@@ -30,7 +30,7 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 script {
-                    withCredentials([file(credentialsId: 'k8s_credentials', variable: 'KUBECONFIG')]) {
+                    withCredentials([file(credentialsId: 'k8s_jenkins_token', variable: 'KUBECONFIG')]) {
                         sh "kubectl apply -f k8s-deployment.yaml"
                         sh "kubectl apply -f k8s-service.yaml"
                     }
