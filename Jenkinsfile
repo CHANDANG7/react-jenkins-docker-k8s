@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        DOCKER_HUB_CREDENTIALS = credentials('dockerhub-credentials')
+        DOCKER_HUB_CREDENTIALS = credentials('dockerhub_credentials') // Corrected credential ID
         DOCKER_IMAGE = "chandancj7/react-jenkins-docker-k8s"
     }
     stages {
@@ -20,7 +20,7 @@ pipeline {
         stage('Push to Docker Hub') {
             steps {
                 script {
-                    docker.withRegistry('https://index.docker.io/v1/', 'dockerhub-credentials') {
+                    docker.withRegistry('https://index.docker.io/v1/', 'dockerhub_credentials') { // Corrected credential ID
                         docker.image(DOCKER_IMAGE).push("latest")
                     }
                 }
